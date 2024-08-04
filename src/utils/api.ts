@@ -1,5 +1,3 @@
-const OPEN_WEATHER_API_KEY = '1bdee9a173186f495a6a3bb8143c3970'
-
 export interface OpenWeatherData {
   name: string
   main: {
@@ -22,14 +20,17 @@ export interface OpenWeatherData {
   }
 }
 
-export async function fetchOpenWeatherData(
-  city: string
-): Promise<OpenWeatherData> {
+export async function fetchOpenWeatherData(): Promise<OpenWeatherData> {
   const res = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${OPEN_WEATHER_API_KEY}`
+    'https://image-generator-proxy-server.vercel.app/weather-forecast',
+    {
+      method: 'POST',
+    }
   )
 
   if (!res.ok) {
+    const errorText = await res.text()
+    console.error('👀 Error response text:', errorText)
     throw new Error('The weather about this city not found.')
   }
 
