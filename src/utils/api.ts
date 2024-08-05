@@ -20,11 +20,18 @@ export interface OpenWeatherData {
   }
 }
 
-export async function fetchOpenWeatherData(): Promise<OpenWeatherData> {
+export async function fetchOpenWeatherData(
+  city: string
+): Promise<OpenWeatherData> {
   const res = await fetch(
     'https://image-generator-proxy-server.vercel.app/weather-forecast',
+    // 'http://localhost:8000/weather-forecast',
     {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ city }),
     }
   )
 
