@@ -1,4 +1,5 @@
 export interface OpenWeatherData {
+  cod: number
   name: string
   main: {
     feels_like: number
@@ -17,31 +18,33 @@ export interface OpenWeatherData {
   wind: {
     deg: number
     speed: number
-  }
+  },
+  message?: string
 }
 
 export async function fetchOpenWeatherData(
   city: string
 ): Promise<OpenWeatherData> {
-  const res = await fetch(
-    'https://image-generator-proxy-server.vercel.app/weather-forecast',
-    // 'http://localhost:8000/weather-forecast',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ city }),
+  try {
+    const res = await fetch(
+      'https://image-generator-proxy-server.vercel.app/weather-forecast',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ city }),
+      }
+    )
+
+    const data: OpenWeatherData = await res.json()
+
+    if (data.cod !== 200) {
+      throw new Error(`API error: ${data.message}`)
     }
-  )
 
-  if (!res.ok) {
-    const errorText = await res.text()
-    console.error('👀 Error response text:', errorText)
-    throw new Error('The weather about this city not found.')
+    return data
+  } catch (e) {
+    throw e
   }
-
-  const data: OpenWeatherData = await res.json()
-
-  return data
 }
