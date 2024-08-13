@@ -18,12 +18,15 @@ export interface OpenWeatherData {
   wind: {
     deg: number
     speed: number
-  },
+  }
   message?: string
 }
 
+export type OpenWeatherTempScale = 'metric' | 'imperial'
+
 export async function fetchOpenWeatherData(
-  city: string
+  city: string,
+  tempScale: OpenWeatherTempScale
 ): Promise<OpenWeatherData> {
   try {
     const res = await fetch(
@@ -33,7 +36,7 @@ export async function fetchOpenWeatherData(
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ city }),
+        body: JSON.stringify({ city, tempScale }),
       }
     )
 
