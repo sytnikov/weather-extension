@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom/client'
 import 'fontsource-roboto'
 import {
   Card,
@@ -9,6 +9,7 @@ import {
   Grid,
   Box,
   Button,
+  Switch,
 } from '@mui/material'
 
 import './options.css'
@@ -37,6 +38,13 @@ const App: React.FC<{}> = () => {
     })
   }
 
+  const handleAutoOverlayChange = (hasAutoOverlay: boolean) => {
+    setOptions({
+      ...options,
+      hasAutoOverlay,
+    })
+  }
+
   const handleSaveButtonClick = () => {
     setFormState('saving')
     setStoredOptions(options).then(() => {
@@ -59,13 +67,24 @@ const App: React.FC<{}> = () => {
               <Typography variant="h4">Weather Extension Options</Typography>
             </Grid>
             <Grid item>
+              <Typography variant="body1">Home city name</Typography>
               <TextField
                 fullWidth
                 placeholder="Enter a home city name"
                 value={options.homeCity}
                 onChange={(event) => handleHomeCityChange(event.target.value)}
                 variant="standard"
-                label="Home city name"
+                disabled={isFieldDisabled}
+              />
+            </Grid>
+            <Grid item>
+              <Typography variant="body1">
+                Overlay widget on a web page
+              </Typography>
+              <Switch
+                color="primary"
+                checked={options.hasAutoOverlay}
+                onChange={(event, checked) => handleAutoOverlayChange(checked)}
                 disabled={isFieldDisabled}
               />
             </Grid>
@@ -88,4 +107,5 @@ const App: React.FC<{}> = () => {
 
 const root = document.createElement('div')
 document.body.appendChild(root)
-ReactDOM.render(<App />, root)
+const reactRoot = ReactDOM.createRoot(root)
+reactRoot.render(<App />)

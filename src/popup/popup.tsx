@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 
 import { Grid, Box, Paper, InputBase, IconButton } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
-
+import { Add, PictureInPicture } from '@mui/icons-material'
 import 'fontsource-roboto'
+
 import './popup.css'
-import WeatherCard from './WeatherCard'
+import WeatherCard from '../components/WeatherCard'
 import {
   LocalStorageOptions,
   getStoredCities,
@@ -14,6 +14,7 @@ import {
   setStoredCities,
   setStoredOptions,
 } from '../utils/storage'
+import { Messages } from '../utils/messages'
 
 const App: React.FC<{}> = () => {
   const [cities, setCities] = useState<string[]>([])
@@ -54,6 +55,20 @@ const App: React.FC<{}> = () => {
     })
   }
 
+  const handleOverlayButtonClick = () => {
+    chrome.tabs.query(
+      {
+        active: true,
+      },
+      (tabs) => {
+        if (tabs.length > 0) {
+          chrome.tabs.sendMessage(tabs[0].id, Messages.TOGGLE_OVERLAY)
+          chrome.tabs.sendMessage(tabs[0].id, Messages.UPDATE_SCALE)
+        }
+      }
+    )
+  }
+
   // make sure the rendering process starts after options are loaded
   if (!options) {
     return null
@@ -69,7 +84,7 @@ const App: React.FC<{}> = () => {
           alignItems="stretch"
           gap={'4px'}
         >
-          <Grid item xs={9}>
+          <Grid item xs={8.5}>
             <Paper>
               <Box px={'15px'} py={'5px'} display={'flex'}>
                 <InputBase
@@ -79,12 +94,12 @@ const App: React.FC<{}> = () => {
                   fullWidth
                 />
                 <IconButton onClick={handleAddCityButtonClick}>
-                  <AddIcon />
+                  <Add />
                 </IconButton>
               </Box>
             </Paper>
           </Grid>
-          <Grid item xs={2} height={'100%'}>
+          <Grid item xs={1.5} height={'100%'}>
             <Paper>
               <Box
                 py={'3px'}
@@ -98,12 +113,24 @@ const App: React.FC<{}> = () => {
               </Box>
             </Paper>
           </Grid>
+          <Grid item xs={1.5} height={'100%'}>
+            <Paper>
+              <Box
+                py={'5px'}
+                display={'flex'}
+                justifyContent={'center'}
+                alignItems={'center'}
+              >
+                <IconButton onClick={handleOverlayButtonClick}>
+                  <PictureInPicture />
+                </IconButton>
+              </Box>
+            </Paper>
+          </Grid>
         </Grid>
-        {
-          options.homeCity != "" && (
-            <WeatherCard city={options.homeCity} tempScale={options.tempScale}/>
-          )
-        }
+        {options.homeCity != '' && (
+          <WeatherCard city={options.homeCity} tempScale={options.tempScale} />
+        )}
         {cities.map((city, index) => (
           <WeatherCard
             city={city}
