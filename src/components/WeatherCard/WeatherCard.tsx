@@ -6,12 +6,15 @@ import {
   Box,
   Button,
   CardActions,
+  Grid,
 } from '@mui/material'
+import { CloseRounded } from '@mui/icons-material';
 
 import {
   OpenWeatherData,
   OpenWeatherTempScale,
   fetchOpenWeatherData,
+  getWeatherIconSrc,
 } from '../../utils/api'
 import './WeatherCard.css'
 
@@ -21,12 +24,12 @@ const WeatherCardContainer: React.FC<{
 }> = ({ children, onDelete }) => {
   return (
     <Box my={'16px'}>
-      <Card>
+      <Card style={{position: "relative"}}>
         <CardContent>{children}</CardContent>
         <CardActions>
           {onDelete && (
-            <Button color="secondary" onClick={onDelete}>
-              <Typography className="weatherCard-body">Delete</Typography>
+            <Button className='weatherCard-delete' color="secondary" onClick={onDelete}>
+              <CloseRounded />
             </Button>
           )}
         </CardActions>
@@ -72,13 +75,28 @@ const WeatherCard: React.FC<{
 
   return (
     <WeatherCardContainer onDelete={onDelete}>
-      <Typography className="weatherCard-title">{weatherData.name}</Typography>
-      <Typography className="weatherCard-body">
-        {Math.round(weatherData.main.temp)}
-      </Typography>
-      <Typography className="weatherCard-body">
-        Feels like: {Math.round(weatherData.main.feels_like)}
-      </Typography>
+      <Grid container justifyContent={"center"} alignItems={"center"} gap={"14px"}>
+        <Grid item xs={6}>
+          <Typography className="weatherCard-title">
+            {weatherData.name}
+          </Typography>
+          <Typography className="weatherCard-temp">
+            {`${Math.round(weatherData.main.temp)}\u00B0`}
+          </Typography>
+          <Typography className="weatherCard-body">
+            {`Feels like: ${Math.round(weatherData.main.feels_like)}\u00B0`}
+          </Typography>
+        </Grid>
+        <Grid item xs={4} display={'flex'} flexDirection={'column'} justifyContent={"center"} alignItems={"center"}>
+          {weatherData.weather.length > 0 && (
+            <>
+              <img src={getWeatherIconSrc(weatherData.weather[0].icon)} className='weatherCard-icon' />
+              <Typography className="weatherCard-body">{weatherData.weather[0].main}</Typography>
+              <Typography className="weatherCard-description">{`(${weatherData.weather[0].description})`}</Typography>
+            </>
+          )}
+        </Grid>
+      </Grid>
     </WeatherCardContainer>
   )
 }

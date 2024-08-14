@@ -9,8 +9,8 @@ import {
 chrome.runtime.onInstalled.addListener(() => {
   setStoredCities([])
   setStoredOptions({
-    hasAutoOverlay: false,
-    homeCity: '',
+    hasAutoOverlay: true,
+    homeCity: 'Helsinki',
     tempScale: 'metric',
   })
 
